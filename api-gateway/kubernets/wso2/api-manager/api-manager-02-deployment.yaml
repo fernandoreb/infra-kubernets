@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  api-manager-deployment
+  labels:
+    app: api-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-manager
+  template:
+    metadata:
+      labels:
+        app: api-manager
+    spec:
+      containers:
+        - name: api-manager
+          image: fernandoreb/wso2am-3.2.0-alpine:1.0
+          ports:
+            - name: apim1
+              containerPort: 9443
+            - name: apim2
+              containerPort: 8280
+            - name: apim3
+              containerPort: 8243
+            - name: apim4
+              containerPort: 9611
+            - name: apim5
+              containerPort: 9711
+            - name: apim6
+              containerPort: 5672
+          env:
+            - name: HOST_NAME
+              value: "192.168.0.27"
+            - name: PROXY_PORT
+              value: "31872"
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+          - name: deployment
+            mountPath: "/home/wso2carbon/wso2-config-volume/repository/conf/deployment.toml"
+            subPath: "deployment.toml"
+      volumes:
+      - name: deployment
+        configMap:
+          name: api-manager-deployment

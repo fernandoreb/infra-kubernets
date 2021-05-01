@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  am-analytics-worker-deployment
+  labels:
+    app: am-analytics-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: am-analytics-worker
+  template:
+    metadata:
+      labels:
+        app: am-analytics-worker
+    spec:
+      containers:
+        - name: am-analytics-worker
+          image: fernandoreb/wso2am-worker-3.2.0-alpine:1.0
+          ports:
+            - name: worker1
+              containerPort: 9092
+            - name: worker2
+              containerPort: 9445
+            - name: worker3
+              containerPort: 7613
+            - name: worker4
+              containerPort: 7713
+          volumeMounts:
+          - name: deployment
+            mountPath: "/home/wso2carbon/wso2-config-volume/conf/worker/deployment.yaml"
+            subPath: "deployment.yaml"
+      volumes:
+      - name: deployment
+        configMap:
+          name: am-analytics-worker-deployment

@@ -1,0 +1,31 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  am-analytics-dash-deployment
+  labels:
+    app: am-analytics-dash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: am-analytics-dash
+  template:
+    metadata:
+      labels:
+        app: am-analytics-dash
+    spec:
+      containers:
+        - name: am-analytics-dash
+          image: fernandoreb/wso2am-dashboard-3.2.0-alpine:1.0
+          ports:
+            - name: dash
+              containerPort: 9643
+          volumeMounts:
+          - name: deployment
+            mountPath: "/home/wso2carbon/wso2-config-volume/conf/dashboard/deployment.yaml"
+            subPath: "deployment.yaml"
+      volumes:
+      - name: deployment
+        configMap:
+          name: am-analytics-dash-deployment
